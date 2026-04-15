@@ -9,6 +9,7 @@ torchvision==0.16.2
 
 # RL environment
 gym==0.21.0
+pettingzoo[mpe,butterfly]==1.24.3
 
 # Plotting / visualisation
 matplotlib==3.8.4
@@ -41,11 +42,6 @@ idna==3.6
 
 # Protobuf (used by tensorboard, wandb)
 protobuf==4.25.3
-
-# Rendering (MPE)
-pyglet==1.5.27
-PyOpenGL==3.1.7
-glfw==2.7.0
 
 # Multiprocessing / serialisation
 dill==0.3.8
