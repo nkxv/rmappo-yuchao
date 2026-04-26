@@ -11,18 +11,25 @@ Usage
     python train_mpe_mappo.py speaker_listener
 
 Optional overrides forwarded directly to train_mpe.py
-    --seed <int>       random seed (default: 1)
-    --user_name <str>  wandb entity name (required when wandb is on)
-    --use_wandb        disable wandb, write TensorBoard logs instead
-    --use_eval         enable periodic evaluation alongside training
+    --start_seed <int>  first seed to run (default: 1)
+    --end_seed <int>    last seed inclusive (default: same as --start_seed)
+    --user_name <str>   wandb entity name (required when wandb is on)
+    --use_wandb         disable wandb, write TensorBoard logs instead
+    --use_eval          enable periodic evaluation alongside training
 
 Examples
 --------
-    # TensorBoard run (wandb disabled by default):
-    python train_mpe_mappo.py spread --seed 3
+    # Single seed (default seed 1):
+    python train_mpe_mappo.py spread
+
+    # Specific seed:
+    python train_mpe_mappo.py spread --start_seed 3
+
+    # Seed sweep 1–5:
+    python train_mpe_mappo.py spread --start_seed 1 --end_seed 5
 
     # Wandb run:
-    python train_mpe_mappo.py reference --user_name my_entity
+    python train_mpe_mappo.py reference --start_seed 1 --end_seed 3 --user_name my_entity
 """
 
 import argparse
@@ -170,11 +177,19 @@ if __name__ == "__main__":
         help="MPE scenario to train (default: spread)",
     )
     p.add_argument(
-        "--seed",
+        "--start_seed",
         type=int,
         default=1,
-        help="Random seed (default: 1)",
+        help="First seed to run (default: 1)",
+    )
+    p.add_argument(
+        "--end_seed",
+        type=int,
+        default=None,
+        help="Last seed to run inclusive (default: same as --start_seed)",
     )
     known, passthrough = p.parse_known_args()
 
-    run(known.scenario, seed=known.seed, extra_flags=passthrough)
+    end = known.end_seed if known.end_seed is not None else known.start_seed
+    for seed in range(known.start_seed, end + 1):
+        run(known.scenario, seed=seed, extra_flags=passthrough)
