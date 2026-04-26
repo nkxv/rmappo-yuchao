@@ -70,6 +70,11 @@ BASE_ARGS = [
     # Logging / saving
     "--log_interval",           "5",
     "--save_interval",          "50",
+    # Eval — run a deterministic evaluation pass every eval_interval episodes.
+    # Metrics appear under eval/ in TensorBoard/wandb.
+    # Change frequency with --eval_interval N (default here: every 25 episodes).
+    "--use_eval",               # store_true → enables eval
+    "--eval_interval",          "25",
     # Disable wandb so the script works without a wandb account out of the box.
     # Remove this line (or pass --user_name) to re-enable wandb logging.
     "--use_wandb",              # store_false → TensorBoard
