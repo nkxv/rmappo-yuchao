@@ -74,7 +74,8 @@ BASE_ARGS = [
     # Metrics appear under eval/ in TensorBoard/wandb.
     # Change frequency with --eval_interval N (default here: every 25 episodes).
     "--use_eval",               # store_true → enables eval
-    "--eval_interval",          "25",
+    "--eval_interval",          "25",   # run eval every 25 training episodes
+    "--eval_episodes",          "32",   # episodes per eval call (× n_eval_rollout_threads)
     # Disable wandb so the script works without a wandb account out of the box.
     # Remove this line (or pass --user_name) to re-enable wandb logging.
     "--use_wandb",              # store_false → TensorBoard
