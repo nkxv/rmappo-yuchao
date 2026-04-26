@@ -171,7 +171,11 @@ class MPERunner(Runner):
 
             for eval_step in range(self.episode_length):
                 self.trainer.prep_rollout()
-                eval_action, eval_rnn_states = self.trainer.policy.act(np.concatenate(eval_obs),
+                # eval_obs is a (n_eval_threads, n_agents) object array from the VecEnv
+                # wrappers (DummyVecEnv/SubprocVecEnv always use dtype=object). Convert
+                # to float32 here because policy.act feeds straight to torch.from_numpy().
+                eval_obs_arr = np.array(eval_obs, dtype=np.float32)
+                eval_action, eval_rnn_states = self.trainer.policy.act(np.concatenate(eval_obs_arr),
                                                     np.concatenate(eval_rnn_states),
                                                     np.concatenate(eval_masks),
                                                     deterministic=True)
