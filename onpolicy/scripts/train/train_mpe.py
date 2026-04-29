@@ -76,6 +76,8 @@ def main(args):
     elif all_args.algorithm_name == "ippo":
         print("u are choosing to use ippo, we set use_centralized_V to be False")
         all_args.use_centralized_V = False
+        all_args.use_recurrent_policy = False
+        all_args.use_naive_recurrent_policy = False
     else:
         raise NotImplementedError
 
