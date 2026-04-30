@@ -86,13 +86,13 @@ class MPERunner(Runner):
         share_obs = []
         for o in obs:
             share_obs.append(list(chain(*o)))
-        share_obs = np.array(share_obs)
+        share_obs = np.array(share_obs, dtype=np.float32)
 
         for agent_id in range(self.num_agents):
             if not self.use_centralized_V:
-                share_obs = np.array(list(obs[:, agent_id]))
+                share_obs = np.array(list(obs[:, agent_id]), dtype=np.float32)
             self.buffer[agent_id].share_obs[0] = share_obs.copy()
-            self.buffer[agent_id].obs[0] = np.array(list(obs[:, agent_id])).copy()
+            self.buffer[agent_id].obs[0] = np.array(list(obs[:, agent_id]), dtype=np.float32).copy()
 
     @torch.no_grad()
     def collect(self, step):
@@ -160,14 +160,14 @@ class MPERunner(Runner):
         share_obs = []
         for o in obs:
             share_obs.append(list(chain(*o)))
-        share_obs = np.array(share_obs)
+        share_obs = np.array(share_obs, dtype=np.float32)
 
         for agent_id in range(self.num_agents):
             if not self.use_centralized_V:
-                share_obs = np.array(list(obs[:, agent_id]))
+                share_obs = np.array(list(obs[:, agent_id]), dtype=np.float32)
 
             self.buffer[agent_id].insert(share_obs,
-                                        np.array(list(obs[:, agent_id])),
+                                        np.array(list(obs[:, agent_id]), dtype=np.float32),
                                         rnn_states[:, agent_id],
                                         rnn_states_critic[:, agent_id],
                                         actions[:, agent_id],
@@ -188,7 +188,7 @@ class MPERunner(Runner):
             eval_temp_actions_env = []
             for agent_id in range(self.num_agents):
                 self.trainer[agent_id].prep_rollout()
-                eval_action, eval_rnn_state = self.trainer[agent_id].policy.act(np.array(list(eval_obs[:, agent_id])),
+                eval_action, eval_rnn_state = self.trainer[agent_id].policy.act(np.array(list(eval_obs[:, agent_id]), dtype=np.float32),
                                                                                 eval_rnn_states[:, agent_id],
                                                                                 eval_masks[:, agent_id],
                                                                                 deterministic=True)
@@ -257,7 +257,7 @@ class MPERunner(Runner):
                     if not self.use_centralized_V:
                         share_obs = np.array(list(obs[:, agent_id]))
                     self.trainer[agent_id].prep_rollout()
-                    action, rnn_state = self.trainer[agent_id].policy.act(np.array(list(obs[:, agent_id])),
+                    action, rnn_state = self.trainer[agent_id].policy.act(np.array(list(obs[:, agent_id]), dtype=np.float32),
                                                                         rnn_states[:, agent_id],
                                                                         masks[:, agent_id],
                                                                         deterministic=True)
