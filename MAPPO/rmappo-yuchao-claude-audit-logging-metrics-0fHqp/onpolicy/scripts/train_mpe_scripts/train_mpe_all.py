@@ -56,7 +56,7 @@ BASE_ARGS = [
     "--experiment_name",        "mappo_linear-anneal-lr_shared_0" # "mpe2_rmappo_optimal_1-3",
     # Parallelism
     "--n_training_threads",     "1",      
-    "--n_rollout_threads",      "15",       #rollout threads (num parallel envs)
+    "--n_rollout_threads",      "128",       #rollout threads (num parallel envs)
     "--n_eval_rollout_threads", "10",
     # Rollout
     "--episode_length",         "25",
@@ -105,7 +105,7 @@ SCENARIOS = {
         "scenario_name": "simple_spread",
         "num_agents":    3,
         "num_landmarks": 3,
-        "num_env_steps": 20_000_000,
+        "num_env_steps": 20_000,
         "ppo_epoch":     10,           # 10 epochs for spread per paper
         "share_policy":  True,        # False -> separated runner
     },
