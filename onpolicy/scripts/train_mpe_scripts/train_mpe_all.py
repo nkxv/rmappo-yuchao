@@ -47,15 +47,18 @@ REPO_ROOT = Path(__file__).resolve().parents[3]
 #   --use_ReLU   store_false, default True  → passing it disables ReLU → Tanh
 #   --use_wandb  store_false, default True  → passing it disables wandb → TensorBoard
 #   --share_policy store_false, default True → passing it sets share_policy=False
+#   --cuda      store_false, default True  → passing it disables CUDA → CPU
 #
 BASE_ARGS = [
-    "--env_name",               "MPE",
-    "--algorithm_name",         "mappo",    # non-recurrent; best per MAPPO paper on MPE
-    "--experiment_name",        "mappo_optimal",
+    #device
+    #"--cuda", # use cpu 
+    "--env_name",               "MPE",  #Keep this as MPE, This is MPE2
+    "--algorithm_name",         "ippo",    #options: mappo, ippo
+    "--experiment_name",        "ippo_lineal-anneal-lr_separated_6-10" # "mpe2_rmappo_optimal_1-3",
     # Parallelism
-    "--n_training_threads",     "1",
-    "--n_rollout_threads",      "128",
-    "--n_eval_rollout_threads", "8",
+    "--n_training_threads",     "1",      
+    "--n_rollout_threads",      "15",       #rollout threads (num parallel envs)
+    "--n_eval_rollout_threads", "10",
     # Rollout
     "--episode_length",         "25",
     "--num_mini_batch",         "1",
@@ -82,10 +85,13 @@ BASE_ARGS = [
     # Change frequency with --eval_interval N (default here: every 25 episodes).
     "--use_eval",               # store_true → enables eval
     "--eval_interval",          "25",   # run eval every 25 training episodes
-    "--eval_episodes",          "32",   # episodes per eval call (× n_eval_rollout_threads)
+    "--eval_episodes",          "10",   # episodes per eval call (× n_eval_rollout_threads)
     # Disable wandb so the script works without a wandb account out of the box.
     # Remove this line (or pass --user_name) to re-enable wandb logging.
     "--use_wandb",              # store_false → TensorBoard
+    
+    # Learning rate annealing
+    "--use_linear_lr_decay" 
 ]
 
 # ── Per-scenario configs ──────────────────────────────────────────────────────
@@ -101,7 +107,7 @@ SCENARIOS = {
         "num_landmarks": 3,
         "num_env_steps": 20_000_000,
         "ppo_epoch":     10,           # 10 epochs for spread per paper
-        "share_policy":  True,
+        "share_policy":  False,        # False -> separated runner
     },
     "reference": {
         "scenario_name": "simple_reference",
@@ -149,7 +155,7 @@ def run(scenario_key: str, seed: int = 1, extra_flags: list = None) -> None:
         f"\n{'='*60}\n"
         f"  Scenario : {cfg['scenario_name']}\n"
         f"  Seed     : {seed}\n"
-        f"  Algorithm: mappo (non-recurrent)\n"
+        f"  Algorithm: {BASE_ARGS[3]}\n"
         f"  Steps    : {cfg['num_env_steps']:,}\n"
         f"  PPO ep.  : {cfg['ppo_epoch']}\n"
         f"{'='*60}\n"
