@@ -2,11 +2,11 @@ When you want to run IPPO or MAPPO, use `trian_mpe_all.py`
 
 Only params to change EVER for `train_mpe_all.py`:
 
-* line 54: `device`, if you want to run on CPU, pass command "`--cuda`"
-* line 56: `algo name`, this decides the algo. options:{ippo, mappo}
-* line 57: `experim name`, this helps track what the runs are, what params they have. Name wisely.
-* line 60: `rollout threads`, this is number of parallel environments
-* line 110: `share_policy`, False for separated, True for shared params (networks). 
+* `device`, if you want to run on CPU, pass command "`--cuda`"
+* `--algorithm_name`, this decides the algo. options:{ippo, mappo}
+* `--experiment_name`, this helps track what the runs are, what params they have. Name wisely.
+* `--n_rollout_threads`, this is number of parallel environments
+* line 111: `share_policy`, False for separated, True for shared params (networks). 
 
 How to run:
 
