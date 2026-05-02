@@ -50,8 +50,6 @@ REPO_ROOT = Path(__file__).resolve().parents[3]
 #   --cuda      store_false, default True  → passing it disables CUDA → CPU
 #
 BASE_ARGS = [
-    #device
-    #"--cuda", # use cpu 
     "--env_name",               "MPE",  #Keep this as MPE, This is MPE2
     "--algorithm_name",         "ippo",    #options: mappo, ippo
     "--experiment_name",        "ippo_lineal-anneal-lr_separated_6-10" # "mpe2_rmappo_optimal_1-3",
@@ -90,8 +88,11 @@ BASE_ARGS = [
     # Remove this line (or pass --user_name) to re-enable wandb logging.
     "--use_wandb",              # store_false → TensorBoard
     
+    #device
+    #"--cuda", # use cpu 
     # Learning rate annealing
     "--use_linear_lr_decay" 
+
 ]
 
 # ── Per-scenario configs ──────────────────────────────────────────────────────
