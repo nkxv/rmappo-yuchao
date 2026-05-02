@@ -16,7 +16,8 @@ def _t2n(x):
 class MPERunner(Runner):
     def __init__(self, config):
         super(MPERunner, self).__init__(config)
-       
+        self.best_eval_return = -float('inf')
+
     def run(self):
         self.warmup()   
 
@@ -74,6 +75,18 @@ class MPERunner(Runner):
                         train_infos[agent_id].update({'individual_rewards': np.mean(idv_rews)})
                         train_infos[agent_id].update({"average_episode_rewards": np.mean(self.buffer[agent_id].rewards) * self.episode_length})
                 self.log_train(train_infos, total_num_steps)
+
+                # aggregate metrics across agents
+                avg_train_reward = np.mean([train_infos[i]['average_episode_rewards'] for i in range(self.num_agents)])
+                print("avg_agent_training_reward: {}".format(avg_train_reward))
+                aggregate_train_infos = {'avg_agent_training_reward': avg_train_reward}
+                for agent_id in range(self.num_agents):
+                    aggregate_train_infos['charts/agent_%d_return' % agent_id] = train_infos[agent_id]['average_episode_rewards']
+                for k, v in aggregate_train_infos.items():
+                    if self.use_wandb:
+                        wandb.log({k: v}, step=total_num_steps)
+                    else:
+                        self.writter.add_scalars(k, {k: v}, total_num_steps)
 
             # eval
             if episode % self.eval_interval == 0 and self.use_eval:
@@ -234,7 +247,22 @@ class MPERunner(Runner):
             eval_train_infos.append({'eval_average_episode_rewards': eval_average_episode_rewards})
             print("eval average episode rewards of agent%i: " % agent_id + str(eval_average_episode_rewards))
 
-        self.log_train(eval_train_infos, total_num_steps)  
+        self.log_train(eval_train_infos, total_num_steps)
+
+        # aggregate eval metrics across agents
+        avg_eval_reward = float(np.mean([info['eval_average_episode_rewards'] for info in eval_train_infos]))
+        print("avg_agent_eval_reward: {}".format(avg_eval_reward))
+        if avg_eval_reward > self.best_eval_return:
+            self.best_eval_return = avg_eval_reward
+        eval_infos = {'avg_agent_eval_reward': avg_eval_reward,
+                      'eval/best_return': self.best_eval_return}
+        for agent_id in range(self.num_agents):
+            eval_infos['eval/agent_%d_return' % agent_id] = float(eval_train_infos[agent_id]['eval_average_episode_rewards'])
+        for k, v in eval_infos.items():
+            if self.use_wandb:
+                wandb.log({k: v}, step=total_num_steps)
+            else:
+                self.writter.add_scalars(k, {k: v}, total_num_steps)
 
     @torch.no_grad()
     def render(self):        
