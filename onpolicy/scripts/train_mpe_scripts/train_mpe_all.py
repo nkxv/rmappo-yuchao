@@ -106,7 +106,7 @@ SCENARIOS = {
         "scenario_name": "simple_spread",
         "num_agents":    3,
         "num_landmarks": 3,
-        "num_env_steps": 20_000_000,
+        "num_env_steps": 100_000,
         "ppo_epoch":     10,           # 10 epochs for spread per paper
         "share_policy":  False,        # False -> separated runner
     },
